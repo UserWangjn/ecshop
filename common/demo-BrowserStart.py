@@ -5,8 +5,8 @@ from common.loggen import LogGen
 import os
 logger = LogGen(logger='浏览器启动加载').getlog()
 def BrowserStart():
-    browsername = getbrowsername('chrome')
-    url = geturl('jc01_core')
+    browsername = getbrowsername('browsername')
+    url = geturl('url')
     if browsername=='firefox':
         driver = webdriver.Firefox()
         driver.get(url)
