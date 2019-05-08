@@ -159,3 +159,5 @@ venv.bak/
 # mypy
 .mypy_cache/
 
+/.idea/ecshop.iml
+/.idea/misc.xml
