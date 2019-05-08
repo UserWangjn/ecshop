@@ -10,10 +10,7 @@ from pages.basepage import BasePage
 from pages.loginpage import LoginPage
 from pages.registerpage import RegisterPage
 from common.geturl import GetUrl
-
 logger = LogGen(logger="TestSuite").getlog()
-
-
 # 创建读取测试集函数
 def read_testsuite(tsname):
     # 设置测试用例读取执行状态标志位
@@ -60,8 +57,6 @@ def read_testsuite(tsname):
         read_testsuite = False
     # 返回测试集执行函数执行状态
     return read_testsuite
-
-
 # 定义浏览器启动函数，本次并没有使用common中定义的browserlauncher函数，读者可自行扩展改写
 def get_driver(testpage, teststep, testdata):
     # 设置浏览器启动函数执行状态，便于后续运行控制
@@ -86,3 +81,133 @@ def get_driver(testpage, teststep, testdata):
         logger.info('浏览器数据错误，请检查测试用例配置')
         get_driver = False
     return get_driver
+#定义测试用例执行函数，共有四个参数
+def exec_script(driver,testpage, teststep, testdata):
+    #定义测试用例执行函数状态标志位
+    exec_script = True
+    try:
+        #登陆功能测试
+        if testpage == '登录':
+            url = driver.current_url
+            url = GetUrl(url) + 'user.php'
+            if driver.current_url != url:
+                driver.get(url)
+            login = LoginPage(driver, testdata)
+            if teststep == '用户名':
+                login.input_username(testdata)
+
+            if teststep == '密码':
+                login.input_password(testdata)
+
+            if teststep == '登录':
+                login.click_submit()
+                time.sleep(5)
+
+        #注册功能测试
+        if testpage == '注册':
+            url = driver.current_url
+            url = GetUrl(url) + 'user.php?act=register'
+            if driver.current_url != url:
+                driver.get(url)
+            userreg = RegisterPage(driver, testdata)
+            if teststep == '用户名':
+                userreg.input_username(testdata)
+            if teststep == 'email':
+                userreg.input_email(testdata)
+            if teststep == '密码':
+                userreg.input_password(testdata)
+            if teststep == '确认密码':
+                userreg.input_comfirpwd(testdata)
+
+                time.sleep(3)
+            if teststep == '注册':
+                userreg.click_submit()
+                time.sleep(5)
+
+        if testpage == '主页':
+            time.sleep(3)
+            url = driver.current_url
+            mainpage = MainPage(driver, url)
+            if teststep == '搜索':
+                mainpage.search_goods(testdata)
+                time.sleep(3)
+            if teststep == '购买':
+                mainpage.buy_goods()
+                time.sleep(3)
+            if teststep == '退出':
+                mainpage.exit_sys()
+                time.sleep(3)
+        if testpage == '其他主页':
+            pass
+    except:
+        exec_script = False
+        url = GetUrl(driver.current_url)
+        driver.get(url)
+    return exec_script
+
+
+#定义测试用例读取函数
+def read_testcase(testcasefile):
+
+#设置测试用例读取函数状态标志位
+
+read_testcase = True
+
+#根据read_testsuite函数中给出的testcasefile测试用例名，拼接测试用例路径信息
+
+testcasefile=os.path.abspath('.')+'\\data\\'+testcasefile+'.xlsx'
+
+#判断需读取执行的测试用例文件是否存在
+
+if os.path.exists(testcasefile):
+
+#如果存在，则写日志，并读取该用例的excel文件
+
+http://logger.info('已找到 %s 测试用例，现在开始读取该用例' %testcasefile)
+
+wbexcel = load_workbook(testcasefile)
+
+sheetnames = wbexcel.get_sheet_names()
+
+ws = wbexcel.get_sheet_by_name(sheetnames[0])
+
+#读取测试用例中每个列的值，以便调用浏览器启动函数或执行测试用例函数
+
+for irow in range(2, ws.max_row + 1):
+
+testpage = ws.cell(row=irow, column=1).value
+
+teststep = ws.cell(row=irow, column=2).value
+
+testdata = ws.cell(row=irow, column=4).value
+
+#如果是浏览器，说明需启动浏览器，调用浏览器启动函数
+
+if testpage=='浏览器':
+
+http://logger.info('正在启动浏览器')
+
+testdriver=get_driver(testpage, teststep, testdata)
+
+else:
+
+#如果不是浏览器，则说明需执行测试用例，调用测试用例执行函数
+
+flag=exec_(testdriver,testpage, teststep, testdata)
+
+#执行完成后退出浏览器
+
+testdriver.quit()
+
+else:
+
+#如果测试用例文件不存在，则写入日志，并提示检查文件是否存在
+
+http://logger.info('未发现 %s 测试用例，请确认该用例是否存在' %testcasefile)
+
+#测试用例读取失败，状态标志位设置为False
+
+read_testcase = False
+
+#返回测试用例读取函数的状态，便于read_testsuite函数调用判断
+
