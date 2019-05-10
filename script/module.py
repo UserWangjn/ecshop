@@ -164,7 +164,7 @@ def read_testcase(testcasefile):
             testpage = ws.cell(row=irow, column=1).value
             teststep = ws.cell(row=irow, column=2).value
             testdata = ws.cell(row=irow, column=4).value
-        #如果是浏览器，说明需启动浏览器，调用浏览器启动函数
+            #如果是浏览器，说明需启动浏览器，调用浏览器启动函数
             if testpage=='浏览器':
                 logger.info('正在启动浏览器')
                 testdriver=get_driver(testpage, teststep, testdata)
