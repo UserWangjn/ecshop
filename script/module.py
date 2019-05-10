@@ -171,8 +171,8 @@ def read_testcase(testcasefile):
             else:
                 #如果不是浏览器，则说明需执行测试用例，调用测试用例执行函数
                 flag=exec_script(testdriver,testpage, teststep, testdata)
-                #执行完成后退出浏览器
-                testdriver.quit()
+        #执行完成后退出浏览器
+        testdriver.quit()
     else:
         #如果测试用例文件不存在，则写入日志，并提示检查文件是否存在
         logger.info('未发现 %s 测试用例，请确认该用例是否存在' %testcasefile)
