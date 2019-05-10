@@ -8,7 +8,7 @@ class LogGen(object):
         logtime = time.strftime('%Y%m%d%H%M',time.localtime())
         logname = os.path.dirname(os.path.abspath('.'))+'/logs/'+logtime+'.log'
 
-        fileh = logging.FileHandler(logname)
+        fileh = logging.FileHandler(logname,encoding='utf-8')
         fileh.setLevel(logging.INFO)
         consoleh=logging.StreamHandler()
         consoleh.setLevel(logging.INFO)
